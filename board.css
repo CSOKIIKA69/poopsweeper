@@ -1,0 +1,124 @@
+#game{
+    display: none;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+}
+
+.game-window{
+    height: 50vh;
+    display: inline-block;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 5px solid #e0a229;
+    border-radius: 8px;
+    box-shadow: rgba(255, 255, 255, 0.533) 0 0 4px;
+}
+
+.board-header button{
+    place-self: center;
+    border: 2px solid #e0a229;
+    border-top: 1px solid #e0a229;
+    aspect-ratio: 1 / 1;
+    height: 95%;
+    background-color: transparent;
+    background-image: url(img/csoki2.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-clip: border-box;
+}
+
+@media screen and (width <= 37.5rem){
+    .board-header {
+        background: #f4c035;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        min-height: 5vh;
+        max-height: 10vh;
+        border-bottom: 3px solid #e0a229
+    }
+
+    .board-header button{
+        place-self: center;
+        border: 2px solid #e0a229;
+        border-top: 1px solid #e0a229;
+        aspect-ratio: 1 / 1;
+        height: 95%;
+        background-color: transparent;
+        background-image: url(img/csoki2.png);
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-clip: border-box;
+    }
+
+    .flag-number-panel,
+    .time-number-panel{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        height: 100%;
+    }
+
+    .flag-number-panel #counter{
+        margin-left: 10%
+    }
+
+    .flag-number-panel::before,
+    .time-number-panel::before{
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: calc(50% - 10vw); /* nudges the icon just left of the centered text */
+        transform: translateY(-50%);
+        height: 7vw;
+        aspect-ratio: 1 / 1;
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+
+    .flag-number-panel::before{
+        background-image: url(img/flag.png);
+        margin-right: 5%;
+    }
+
+    .time-number-panel::before{
+        background-image: url(img/clock.png);
+    }
+
+    #counter{
+        color: white;
+        text-align: center;
+        line-height: 1;
+        margin: 0;
+        font-size: 7vw
+    }
+
+    .cell {
+        width: 24px;
+        height: 24px;
+        gap: 2px;
+    }
+}
+
+.board{
+    display: grid;
+}
+
+.board-header-container{
+    display: flex;
+}
+
+.board-header{
+    flex-grow: 1;
+    width: 0;
+}
+
+.row{
+    display: flex;
+}
+
+.cell{
+    border: solid 1px rgba(247, 247, 247, 0.263);
+}

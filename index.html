@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poopsweeper</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="board.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=arrow_forward" />
+</head>
+<body>
+    <img src="img/logo.png" alt="poopsweeper-logo" class="logo">
+    <h1 class="name"></h1>
+    <main id="menu">
+        <div class="dialogue" id="dialogue">
+            <h2><span style="--i:1">Oh,</span> <span style="--i:2">no!</span></h2>
+            <h1><span style="--i:7">Csoki</span> <span style="--i:8">has</span> <span style="--i:9">pooped</span> <span style="--i:10">all</span> <span style="--i:11">over</span> <span style="--i:12">the</span> <span style="--i:13">yard!</span></h1>
+        </div>
+        <button id="btn"><span class="material-symbols-outlined" onclick="forwardMenu()">arrow_forward</span></button>
+        <div class="csoki-container" id="csoki-container">
+            <img src="img/csoki1.png" alt="#" class="csoki">
+        </div>
+    </main>
+
+    <section id="menu-sec">
+        <h1>Choose a difficulty</h1>
+
+        <button onclick="setDiff(1); forwardMenu()" id="eBtn" style="background: rgba(122, 255, 120, 0.316)">Easy</button>
+        <button onclick="setDiff(2); forwardMenu()" id="mBtn" style="background: rgba(255, 181, 120, 0.316)">Medium</button>
+        <button onclick="setDiff(3); forwardMenu()" id="hBtn" style="background: rgba(255, 120, 120, 0.316)">Hard</button>
+    </section>
+
+    <section id="game">
+        <div class="game-window">
+            <div class="board-header-container">
+                <div class="board-header">
+                    <div class="flag-number-panel">
+                        <p id="flag counter"></p>
+                    </div>
+                    <button></button>
+                    <div class="time-number-panel">
+                        <p id="time counter"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="board" id="board"></div>
+        </div>
+    </section>
+    <script src="script.js"></script>
+</body>
+</html>
