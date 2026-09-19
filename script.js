@@ -140,7 +140,7 @@ function revealEmptyCell(row, col) {
                     if (rowOffset === 0 && colOffset === 0 || neighRow < 0 || neighRow >= rows || neighCol < 0 || neighCol >= cols || boardArray[neighRow][neighCol].revealed) {
                         continue
                     } else {
-                        
+
                     }
                 }
             }
@@ -181,7 +181,7 @@ function revealCell(cell){
             } else if (cell.dataset.number == 7) {
                 cell.style.color = "black"
             } else {
-                cell.styel.color = "grey"
+                cell.style.color = "grey"
             }
         }
         
