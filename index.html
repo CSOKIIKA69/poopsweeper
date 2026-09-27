@@ -25,9 +25,9 @@
     <section id="menu-sec">
         <h1>Choose a difficulty</h1>
 
-        <button onclick="createBoard(1); forwardMenu()" id="eBtn" style="background: rgba(122, 255, 120, 0.316)">Easy</button>
-        <button onclick="createBoard(2); forwardMenu()" id="mBtn" style="background: rgba(255, 181, 120, 0.316)">Medium</button>
-        <button onclick="createBoard(3); forwardMenu()" id="hBtn" style="background: rgba(255, 120, 120, 0.316)">Hard</button>
+        <button onclick="setDiff(1); forwardMenu()" id="eBtn" style="background: rgba(122, 255, 120, 0.316)">Easy</button>
+        <button onclick="setDiff(2); forwardMenu()" id="mBtn" style="background: rgba(255, 181, 120, 0.316)">Medium</button>
+        <button onclick="setDiff(3); forwardMenu()" id="hBtn" style="background: rgba(255, 120, 120, 0.316)">Hard</button>
     </section>
 
     <section id="game">
@@ -37,7 +37,7 @@
                     <div class="flag-number-panel">
                         <p id="flag counter"></p>
                     </div>
-                    <button></button>
+                    <button onclick="restartGame()"></button>
                     <div class="time-number-panel">
                         <p id="time counter"></p>
                     </div>
@@ -46,6 +46,7 @@
             <div class="board" id="board"></div>
         </div>
     </section>
+    <script src="dist/long-press-event.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

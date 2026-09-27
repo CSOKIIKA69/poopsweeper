@@ -9,10 +9,15 @@ let crntMn = 1
 let diff = 0
 
 let mines = 0
+let flags = 0
 let cols = 0
 let rows = 0
 
+let gameOver = false
+
 let boardArray = []
+
+document.addEventListener('contextmenu', event => event.preventDefault());
 
 function forwardMenu() {
     if (crntMn == 1) {
@@ -40,23 +45,28 @@ function backMenu() {
 
 function setDiff(n){
     if (n == 1){
-        rows = 9
-        cols = 9
-        mines = 10
+        rows = cols = 9
+        mines = flags = 10
     } else if (n == 2){
         rows = 13
         cols = 11
-        mines = 22
+        mines = flags = 22
     } else {
         rows = 16
         cols = 14
-        mines = 35
+        mines = flags = 35
     }
+
+    createBoard()
 }
 
-function handleTimer() {}
+function handleTimer() {
 
-function handleFlagCounter() {}
+}
+
+function handleFlagCounter() {
+    document.getElementById('flag counter').innerHTML = flags
+}
 
 function handleMines() {
     for (i = 0; i < mines; i++) {
@@ -118,29 +128,76 @@ function createArray() {
 }
 
 function endGame(){
+    gameOver = true
+
     for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
             if (boardArray[row][col].mine) {
                 const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`)
-                cell.innerHTML = '<img src="/img/bomb.png" class="bomb">'
+                if (boardArray[row][col].flagged) {
+                    cell.style.background = "#b96321"
+                    cell.style.borderLeft = "#7e3c16 0.5px solid"
+                    cell.style.borderBottom = "#7e3e16 0.5px solid"
+                    cell.style.borderRight = "#7e3e16 0.5px solid"
+                    cell.style.borderTop = "#7e4516 0.5px solid"
+                } else {
+                    boardArray[cell.dataset.row][cell.dataset.col].revealed = true
+                    cell.innerHTML = '<img src="/img/bomb.png" class="bombflag">'
+                }
             }
         }
     }
 }
 
+function revealColor(cell){
+    boardArray[cell.dataset.row][cell.dataset.col].revealed = true
+
+    cell.style.background = "#a97a1e"
+    cell.style.borderLeft = "#7e5c16 0.5px solid"
+    cell.style.borderBottom = "#7e5c16 0.5px solid"
+    cell.style.borderRight = "#7e5c16 0.5px solid"
+    cell.style.borderTop = "#7e5c16 0.5px solid"
+
+    let cellNum = boardArray[cell.dataset.row][cell.dataset.col].number
+    
+    if (cellNum != 0) {
+        cell.innerHTML = cellNum
+
+        if (cellNum == 1) {
+                cell.style.color = "#7cc7ff"
+            } else if (cellNum == 2) {
+                cell.style.color = "#66c266"
+            } else if (cellNum == 3) {
+                cell.style.color = "#ff586c"
+            } else if (cellNum == 4) {
+                cell.style.color = "#ee88ff"
+            } else if (cellNum == 5) {
+                cell.style.color = "maroon"
+            } else if (cellNum == 6) {
+                cell.style.color = "cyan"
+            } else if (cellNum == 7) {
+                cell.style.color = "black"
+            } else if (cellNum == 8) {
+                cell.style.color = "grey"
+            }
+    }
+}
+
 function revealEmptyCell(row, col) {
-    for (let row = 0; row < rows; row++) {
-        for (let col = 0; col < cols; col++) {
+    if (!gameOver) {
+        for (let rowOffset = -1; rowOffset <= 1; rowOffset++) {
+            for (let colOffset = -1; colOffset <= 1; colOffset++){
+                const neighRow = rowOffset + row
+                const neighCol = colOffset + col
 
-            for (let rowOffset = -1; rowOffset <= 1; rowOffset++) {
-                for (let colOffset = -1; colOffset <= 1; colOffset++){
-                    const neighRow = rowOffset + row
-                    const neighCol = colOffset + col
+                cell = document.querySelector(`[data-row="${neighRow}"][data-col="${neighCol}"]`)
 
-                    if (rowOffset === 0 && colOffset === 0 || neighRow < 0 || neighRow >= rows || neighCol < 0 || neighCol >= cols || boardArray[neighRow][neighCol].revealed) {
-                        continue
-                    } else {
-
+                if (rowOffset === 0 && colOffset === 0 || neighRow < 0 || neighRow >= rows || neighCol < 0 || neighCol >= cols || boardArray[neighRow][neighCol].revealed || boardArray[neighRow][neighCol].flagged) {
+                    continue
+                } else {
+                    revealColor(cell)
+                    if (boardArray[neighRow][neighCol].number == 0) {
+                        revealEmptyCell(neighRow, neighCol)
                     }
                 }
             }
@@ -149,52 +206,68 @@ function revealEmptyCell(row, col) {
 }
 
 function revealCell(cell){
-    if (boardArray[cell.dataset.row][cell.dataset.col].mine) {
-        endGame()
+    if (!gameOver){
+        console.log('not over')
     } else {
-        boardArray[cell.dataset.row][cell.dataset.col].revealed = true
-        if (boardArray[cell.dataset.row][cell.dataset.col].number == 0) {
-            cell.style.background = "#a97a1e"
-            cell.style.borderLeft = "#7e5c16 0.5px solid"
-            cell.style.borderBottom = "#7e5c16 0.5px solid"
-            cell.style.borderRight = "#7e5c16 0.5px solid"
-            cell.style.borderTop = "#7e5c16 0.5px solid"
-        } else {
-            cell.innerHTML = boardArray[cell.dataset.row][cell.dataset.col].number
-            cell.style.background = "#a97a1e"
-            cell.style.borderLeft = "#7e5c16 0.5px solid"
-            cell.style.borderBottom = "#7e5c16 0.5px solid"
-            cell.style.borderRight = "#7e5c16 0.5px solid"
-            cell.style.borderTop = "#7e5c16 0.5px solid"
-            if (cell.dataset.number == 1) {
-                cell.style.color = "#7cc7ff"
-            } else if (cell.dataset.number == 2) {
-                cell.style.color = "#66c266"
-            } else if (cell.dataset.number == 3) {
-                cell.style.color = "#ff586c"
-            } else if (cell.dataset.number == 4) {
-                cell.style.color = "#ee88ff"
-            } else if (cell.dataset.number == 5) {
-                cell.style.color = "maroon"
-            } else if (cell.dataset.number == 6) {
-                cell.style.color = "cyan"
-            } else if (cell.dataset.number == 7) {
-                cell.style.color = "black"
-            } else {
-                cell.style.color = "grey"
+        console.log('over')
+    }
+
+    if (gameOver || boardArray[cell.dataset.row][cell.dataset.col].revealed) {
+        
+    } else {
+        let cellNum = boardArray[cell.dataset.row][cell.dataset.col].number
+        
+        if (boardArray[cell.dataset.row][cell.dataset.col].flagged != true) {
+            if (boardArray[cell.dataset.row][cell.dataset.col].mine) {
+                
+                endGame()
+            
+            } else {     
+                revealColor(cell)
+            
+                if (cellNum == 0) {
+                    revealEmptyCell(Number(cell.dataset.row), Number(cell.dataset.col))
+                }
+            
             }
         }
-        
     }
 }
 
 function placeFlag(cell) {
+    if (!gameOver) {
+        cellArray = boardArray[cell.dataset.row][cell.dataset.col]
 
+        if (cellArray.revealed != true) {
+            if (cellArray.flagged != true) {
+                cellArray.flagged = true
+                flags -= 1
+                cell.innerHTML = '<img src="/img/flag.png" class="bombflag">'
+                handleFlagCounter()
+            } else {
+                flags += 1
+                cellArray.flagged = false
+                cell.innerHTML = ''
+                handleFlagCounter()
+            }
+        }
+    }
 }
 
-function createBoard(n) {
+const isMobile = () => {
+  if (navigator.userAgentData) {
+    return navigator.userAgentData.mobile;
+  }  
+  return /Mobi|Android/i.test(navigator.userAgent);
+};
 
-    setDiff(n)
+function restartGame() {
+    board.innerHTML = ''
+    gameOver = false
+    createBoard()
+}
+
+function createBoard() {
 
     createArray()
     
@@ -210,13 +283,23 @@ function createBoard(n) {
             cell.dataset.row = rowIndex
             cell.dataset.col = colIndex
 
-            cell.addEventListener("mousedown", event => {
-                if (event.button == 0) {
-                    revealCell(cell)
-                } else if (event.button == 2) {
+            if (isMobile()) {
+                cell.addEventListener('click', () => {revealCell(cell)})
+                cell.addEventListener('long-press', function(e) {
                     placeFlag(cell)
-                }
-            })
+                })
+            } else {
+                cell.addEventListener('click', () => {
+                    revealCell(cell)
+                })
+                cell.addEventListener('contextmenu', (event) => {
+                    event.preventDefault()
+                    placeFlag(cell)
+                })
+            }
         }
     }
+
+    handleFlagCounter()
+
 }
