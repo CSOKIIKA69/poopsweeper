@@ -3,17 +3,30 @@ const menuSec = document.getElementById("menu-sec")
 const menuGame = document.getElementById("game")
 const navBtn = document.getElementById("btn")
 const board = document.getElementById('board')
+const timeDisp = document.getElementById('time')
+const results = document.getElementById('results-container')
 
 let crntMn = 1
 
 let diff = 0
 
 let mines = 0
-let flags = 0
 let cols = 0
 let rows = 0
 
+let flags = 0
+let timeDat = 0
+
+let clicks = 0
+let bv = 0
+
+let revealedCount = 0
+
 let gameOver = false
+
+let datTimeInt
+
+let timerStarted = false
 
 let boardArray = []
 
@@ -35,7 +48,26 @@ function backMenu() {
     if (crntMn == 3) {
         menuGame.style.display = "none";
         menuSec.style.display = "flex";
-        crntMn -= 1
+        crntMn -= 1;
+        clearInterval(datTimeInt)
+
+        timeSec = 0
+        timeDat = 0
+        gameOver = false
+
+        timerStarted = false
+
+        flags = mines
+        
+        bv = 0
+        board.innerHTML = ''
+
+        timeDisp.innerHTML = 0
+
+        revealedCount = 0
+        clicks = 0
+
+        results.style.display = "none"
     } else if (crntMn == 2) {
         menuSec.style.display = "none";
         menu.style.display = "flex";
@@ -46,26 +78,32 @@ function backMenu() {
 function setDiff(n){
     if (n == 1){
         rows = cols = 9
-        mines = flags = 10
+        mines = 10
+        flags = 10
     } else if (n == 2){
         rows = 13
         cols = 11
-        mines = flags = 22
+        mines = 22
+        flags = 22
     } else {
         rows = 16
         cols = 14
-        mines = flags = 35
+        mines = 35
+        flags = 35
     }
 
     createBoard()
 }
 
 function handleTimer() {
-
+    datTimeInt = setInterval(() => {
+        timeDat += 1
+        timeDisp.innerHTML = Math.round(timeDat/100)
+    }, 10)
 }
 
 function handleFlagCounter() {
-    document.getElementById('flag counter').innerHTML = flags
+    document.getElementById('flag').innerHTML = flags
 }
 
 function handleMines() {
@@ -118,7 +156,8 @@ function createArray() {
                 mine: false,
                 number: 0,
                 revealed: false,
-                flagged: false
+                flagged: false,
+                visited: false
             }) 
         
     ))
@@ -127,29 +166,76 @@ function createArray() {
     calcNums()
 }
 
-function endGame(){
+function endGame(won){
+    clearInterval(datTimeInt)
     gameOver = true
 
     for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
-            if (boardArray[row][col].mine) {
-                const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`)
-                if (boardArray[row][col].flagged) {
+            const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`)
+            if (!won) {    
+                if (boardArray[row][col].flagged && !boardArray[row][col].mine) {
                     cell.style.background = "#b96321"
                     cell.style.borderLeft = "#7e3c16 0.5px solid"
                     cell.style.borderBottom = "#7e3e16 0.5px solid"
                     cell.style.borderRight = "#7e3e16 0.5px solid"
                     cell.style.borderTop = "#7e4516 0.5px solid"
-                } else {
+                }
+                if (boardArray[row][col].mine && !boardArray[row][col].flagged) {
                     boardArray[cell.dataset.row][cell.dataset.col].revealed = true
                     cell.innerHTML = '<img src="/img/bomb.png" class="bombflag">'
+                    cell.style.background = "#a97a1e"
+                    cell.style.borderLeft = "#7e5c16 0.5px solid"
+                    cell.style.borderBottom = "#7e5c16 0.5px solid"
+                    cell.style.borderRight = "#7e5c16 0.5px solid"
+                    cell.style.borderTop = "#7e5c16 0.5px solid"
+                }
+            } else {
+                if (boardArray[row][col].mine && !boardArray[row][col].flagged) {
+                    boardArray[cell.dataset.row][cell.dataset.col].revealed = true
+                    cell.innerHTML = '<img src="/img/flag.png" class="bombflag">'
+                    cell.style.background = "#a97a1e"
+                    cell.style.borderLeft = "#7e5c16 0.5px solid"
+                    cell.style.borderBottom = "#7e5c16 0.5px solid"
+                    cell.style.borderRight = "#7e5c16 0.5px solid"
+                    cell.style.borderTop = "#7e5c16 0.5px solid"
                 }
             }
         }
     }
+
+    if (won) {
+        if (mines == 10 ) {
+            if (timeDat/100 < localStorage.getItem('pb1') || !localStorage.getItem('pb1')) {localStorage.setItem('pb1', timeDat/100)}
+            document.getElementById('result-pb').innerHTML = localStorage.getItem('pb1')
+        } else if (mines == 22) {
+            if (timeDat/100 < localStorage.getItem('pb2') || !localStorage.getItem('pb2')) {localStorage.setItem('pb2', timeDat/100)}
+            document.getElementById('result-pb').innerHTML = localStorage.getItem('pb2')
+        } else if (mines == 35) {
+            if (timeDat/100 < localStorage.getItem('pb3') || !localStorage.getItem('pb3')) {localStorage.setItem('pb3', timeDat/100)}
+            document.getElementById('result-pb').innerHTML = localStorage.getItem('pb3')
+        }
+    }
+
+    results.style.display = "flex"
+
+    document.getElementById('result-time').innerHTML = timeDat/100
+    document.getElementById('result-3bv').innerHTML = bv
+    document.getElementById('result-3bvs').innerHTML = ((timeDat/100)/bv).toFixed(4)
+    document.getElementById('result-click').innerHTML = clicks
+}
+
+function checkWin() {
+    if (revealedCount == rows*cols-mines) {
+        endGame(true)
+    }
 }
 
 function revealColor(cell){
+    revealedCount += 1
+
+    checkWin()
+    
     boardArray[cell.dataset.row][cell.dataset.col].revealed = true
 
     cell.style.background = "#a97a1e"
@@ -206,29 +292,25 @@ function revealEmptyCell(row, col) {
 }
 
 function revealCell(cell){
-    if (!gameOver){
-        console.log('not over')
-    } else {
-        console.log('over')
-    }
-
     if (gameOver || boardArray[cell.dataset.row][cell.dataset.col].revealed) {
         
     } else {
         let cellNum = boardArray[cell.dataset.row][cell.dataset.col].number
         
         if (boardArray[cell.dataset.row][cell.dataset.col].flagged != true) {
+            if (timerStarted == false) {
+                timerStarted = true
+                handleTimer()
+            }
             if (boardArray[cell.dataset.row][cell.dataset.col].mine) {
-                
-                endGame()
-            
-            } else {     
+                clicks += 1
+                endGame(false)
+            } else {
+                clicks += 1
                 revealColor(cell)
-            
                 if (cellNum == 0) {
                     revealEmptyCell(Number(cell.dataset.row), Number(cell.dataset.col))
                 }
-            
             }
         }
     }
@@ -242,10 +324,12 @@ function placeFlag(cell) {
             if (cellArray.flagged != true) {
                 cellArray.flagged = true
                 flags -= 1
+                clicks += 1
                 cell.innerHTML = '<img src="/img/flag.png" class="bombflag">'
                 handleFlagCounter()
             } else {
                 flags += 1
+                clicks += 1
                 cellArray.flagged = false
                 cell.innerHTML = ''
                 handleFlagCounter()
@@ -262,9 +346,86 @@ const isMobile = () => {
 };
 
 function restartGame() {
-    board.innerHTML = ''
+    clearInterval(datTimeInt)
+
+    timeSec = 0
+    timeDat = 0
     gameOver = false
+
+    timerStarted = false
+
+    flags = mines
+    
+    bv = 0
+    board.innerHTML = ''
     createBoard()
+
+    timeDisp.innerHTML = 0
+    handleFlagCounter()
+
+    revealedCount = 0
+    clicks = 0
+
+    results.style.display = "none"
+}
+
+function exploreZero(row, col) {
+    boardArray[row][col].visited = true
+
+    for (let rowOffset = -1; rowOffset <= 1; rowOffset++) {
+        for (let colOffset = -1; colOffset <= 1; colOffset++){
+
+            const neighRow = rowOffset + row
+            const neighCol = colOffset + col
+
+            if (rowOffset === 0 && colOffset === 0 || neighRow < 0 || neighRow >= rows || neighCol < 0 || neighCol >= cols || boardArray[neighRow][neighCol].number != 0 || boardArray[neighRow][neighCol].mine || boardArray[neighRow][neighCol].visited) {
+                
+                continue
+
+            } else {
+                
+                if (boardArray[neighRow][neighCol].number == 0) {
+                    exploreZero(neighRow, neighCol)
+                }
+
+            }
+        }
+
+    }
+}
+
+function tBV() {
+    for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+            
+            if (!boardArray[row][col].mine) {
+                if (boardArray[row][col].number == 0) {
+                    if (!boardArray[row][col].visited) {
+                        boardArray[row][col].visited = true
+                        bv += 1
+                        exploreZero(row, col)
+                    }
+                } else {
+                    let hasZero = false
+
+                    for (let rowOffset = -1; rowOffset <= 1; rowOffset++) {
+                        for (let colOffset = -1; colOffset <= 1; colOffset++){
+
+                            const neighRow = rowOffset + row
+                            const neighCol = colOffset + col
+
+                            if (rowOffset === 0 && colOffset === 0 || neighRow < 0 || neighRow >= rows || neighCol < 0 || neighCol >= cols || boardArray[neighRow][neighCol].number == 0) {
+                                hasZero = true
+                            }
+                        }
+                    }
+                    if (!hasZero) {
+                        bv += 1
+                    }
+                }
+            }
+        }
+    }
 }
 
 function createBoard() {
@@ -301,5 +462,6 @@ function createBoard() {
     }
 
     handleFlagCounter()
+    tBV()
 
 }

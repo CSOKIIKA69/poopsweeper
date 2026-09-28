@@ -18,6 +18,7 @@
     border-left-color: #f4c035;
     background: #b98621;
     box-shadow: rgba(255, 255, 255, 0.533) 0 0 4px;
+    position: relative;
 }
 
 .board-header button{
@@ -47,84 +48,111 @@
     border-left-color: #876218;
 }
 
-@media screen and (width <= 37.5rem){
-    .board-header {
-        background: #b98621;
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        min-height: 5vh;
-        max-height: 10vh;
-        border-bottom: 3px solid #e0a229
+.board-header {
+    background: #b98621;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    min-height: 5vh;
+    max-height: 10vh;
+    border-bottom: 3px solid #e0a229
+}
+
+.board-header button{
+    place-self: center;
+    aspect-ratio: 1 / 1;
+    height: 75%;
+    background-color: transparent;
+    background-image: url(img/csoki2.png);
+    background-size: 85%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-clip: border-box;
+}
+
+.counter{
+    color: white;
+    text-align: center;
+    line-height: 1;
+    font-size: 16px;
+    text-shadow: #533c0e 1px 1px 1px;
+    margin: 0 auto
+}
+
+.cell {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white
+}
+
+.bombflag {
+    width: 20px;
+}
+
+.flagImg, .timeImg{
+    max-height: 3vh;
+    margin: 0 auto;
+}
+
+.flag-number-panel,
+.time-number-panel{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    height: 100%;
+}
+
+.time-number-panel{
+    margin-right: 40%
+}
+
+@media screen and (width <= 65rem){
+    #results-container{
+        display: flex
     }
 
-    .board-header button{
-        place-self: center;
-        aspect-ratio: 1 / 1;
-        height: 75%;
-        background-color: transparent;
-        background-image: url(img/csoki2.png);
-        background-size: 85%;
-        background-repeat: no-repeat;
-        background-position: center;
-        background-clip: border-box;
+    .results{
+        flex-grow: 1;
+        width: 0;
     }
 
-    .flag-number-panel,
-    .time-number-panel{
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        height: 100%;
+    .cell{
+        border: solid 2px;
+        border-left-color:#f4c035;
+        border-top-color: #f4c035;
+        border-right-color: #876218;
+        border-bottom-color: #876218;
     }
+}
 
-    .flag-number-panel #counter{
-        margin-left: 10%
+@media screen and (width > 65rem) {
+    .game-window{
+        transform: scale(1.3)
     }
-
-    .flag-number-panel::before,
-    .time-number-panel::before{
-        content: "";
+    #results-container{
         position: absolute;
+        translate: 0 -50%;
         top: 50%;
-        left: calc(50% - 8vw);
-        transform: translateY(-50%);
-        height: 7vw;
-        aspect-ratio: 1 / 1;
-        background-size: cover;
-        background-repeat: no-repeat;
-        
+        left: 120%;
+        width: 10vw;
+        border: 4px solid;
+        border-bottom-color: #876218;
+        border-right-color: #876218;
+        border-top-color: #f4c035;
+        border-left-color: #f4c035;
+        background: #b98621;
+        box-shadow: rgba(255, 255, 255, 0.533) 0 0 4px;
     }
 
-    .flag-number-panel::before{
-        background-image: url(img/flag.png);
-        margin-right: 5%;
-    }
-
-    .time-number-panel::before{
-        background-image: url(img/clock.png);
-    }
-
-    #counter{
-        color: white;
-        text-align: center;
-        line-height: 1;
-        margin: 0;
-        font-size: 7vw
-    }
-
-    .cell {
-        width: 24px;
-        height: 24px;
-        gap: 2px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: white
-    }
-
-    .bombflag {
-        width: 20px;
+    .cell{
+        border: solid 3px;
+        border-left-color:#f4c035;
+        border-top-color: #f4c035;
+        border-right-color: #876218;
+        border-bottom-color: #876218;
     }
 }
 
@@ -164,11 +192,41 @@
 
 .cell{
     box-sizing: border-box;
-    border: solid 2px;
-    border-left-color:#f4c035;
-    border-top-color: #f4c035;
-    border-right-color: #876218;
-    border-bottom-color: #876218;
     text-align: center;
-    font-weight: bold
+    font-weight: bold;
+    text-shadow: #533c0e 1px 1px 1px
+}
+
+#results-container{
+    /* border: 5px solid; */
+    /* border-bottom-color: #876218;
+    border-right-color: #876218;
+    border-top-color: #f4c035;
+    border-left-color: #f4c035; */
+    background: #b98621;
+    display: none
+}
+
+.results{
+    padding: 3% 5%;
+    margin: 5px;
+    border: 4px solid;
+    border-bottom-color: #f4c035;
+    border-left-color: #876218;
+    border-top-color: #876218;
+    border-right-color: #f4c035;
+    width: 100%;
+}
+
+.results-divider{
+    height: 1.5px;
+    background: #f4c035;
+    width: 100%;
+    margin: 5px auto;
+    border-radius: 8px;
+}
+
+.results > p{
+    color: white;
+    text-shadow: #533c0e 1px 1px 1px;
 }
