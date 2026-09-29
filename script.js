@@ -291,18 +291,57 @@ function revealEmptyCell(row, col) {
     }
 }
 
+function chordCell(row, col){
+    console.log('chordCell')
+    let flagsCount = 0
+
+    for (let rowOffset = -1; rowOffset <= 1; rowOffset++) {
+        for (let colOffset = -1; colOffset <= 1; colOffset++){
+            const neighRow = rowOffset + row
+            const neighCol = colOffset + col
+
+            if (rowOffset === 0 && colOffset === 0 || neighRow < 0 || neighRow >= rows || neighCol < 0 || neighCol >= cols) {
+                continue
+            } else {
+                if (boardArray[neighRow][neighCol].flagged) {
+                    flagsCount += 1
+                }
+            }
+        }
+    }
+
+    console.log(flagsCount, boardArray[row][col].number)
+
+    if (flagsCount === boardArray[row][col].number) {
+        for (let rowOffset = -1; rowOffset <= 1; rowOffset++) {
+            for (let colOffset = -1; colOffset <= 1; colOffset++){
+                const neighRow = rowOffset + row
+                const neighCol = colOffset + col
+
+                if (rowOffset === 0 && colOffset === 0 || neighRow < 0 || neighRow >= rows || neighCol < 0 || neighCol >= cols || boardArray[neighRow][neighCol].flagged || boardArray[neighRow][neighCol].revealed) {
+                    continue
+                } else {
+                    revealCell(document.querySelector(`[data-row="${neighRow}"][data-col="${neighCol}"]`))
+                }
+            }
+        }
+    }
+}
+
 function revealCell(cell){
-    if (gameOver || boardArray[cell.dataset.row][cell.dataset.col].revealed) {
+    if (gameOver) {
         
+    } else if (boardArray[Number(cell.dataset.row)][Number(cell.dataset.col)].revealed) {
+        chordCell(Number(cell.dataset.row), Number(cell.dataset.col))
     } else {
-        let cellNum = boardArray[cell.dataset.row][cell.dataset.col].number
+        let cellNum = boardArray[Number(cell.dataset.row)][Number(cell.dataset.col)].number
         
-        if (boardArray[cell.dataset.row][cell.dataset.col].flagged != true) {
+        if (boardArray[Number(cell.dataset.row)][Number(cell.dataset.col)].flagged != true) {
             if (timerStarted == false) {
                 timerStarted = true
                 handleTimer()
             }
-            if (boardArray[cell.dataset.row][cell.dataset.col].mine) {
+            if (boardArray[Number(cell.dataset.row)][Number(cell.dataset.col)].mine) {
                 clicks += 1
                 endGame(false)
             } else {
