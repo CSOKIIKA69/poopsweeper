@@ -292,7 +292,6 @@ function revealEmptyCell(row, col) {
 }
 
 function chordCell(row, col){
-    console.log('chordCell')
     let flagsCount = 0
 
     for (let rowOffset = -1; rowOffset <= 1; rowOffset++) {
@@ -309,8 +308,6 @@ function chordCell(row, col){
             }
         }
     }
-
-    console.log(flagsCount, boardArray[row][col].number)
 
     if (flagsCount === boardArray[row][col].number) {
         for (let rowOffset = -1; rowOffset <= 1; rowOffset++) {
