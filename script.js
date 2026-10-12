@@ -442,7 +442,6 @@ function exploreZero(row, col) {
 function tBV() {
     bv = 0;
 
-    // Reset visited state before calculating 3BV.
     for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
             boardArray[row][col].visited = false;
