@@ -2,7 +2,8 @@
 A Minesweeper-based game, but in a dog-themed style with 💩.
 
 <img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/bad4601e-505e-4ff3-a0bc-524ab6c95c77"/>
-**[Try it!](https://poop.matyi.top/) **
+
+[Try it!](https://poop.matyi.top/)
 
 ### I want to try this
 
