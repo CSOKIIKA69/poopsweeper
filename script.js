@@ -51,7 +51,7 @@ function backMenu() {
         crntMn -= 1;
         clearInterval(datTimeInt)
 
-        timeSec = 0
+        let timeSec = 0
         timeDat = 0
         gameOver = false
 
@@ -85,7 +85,7 @@ function setDiff(n){
         cols = 11
         mines = 22
         flags = 22
-    } else {
+    } else if (n == 3) {
         rows = 16
         cols = 14
         mines = 35
@@ -107,7 +107,7 @@ function handleFlagCounter() {
 }
 
 function handleMines() {
-    for (i = 0; i < mines; i++) {
+    for (let i = 0; i < mines; i++) {
         let randomCol = Math.floor(Math.random() * cols)
         let randomRow = Math.floor(Math.random() * rows)
 
@@ -221,8 +221,12 @@ function endGame(won){
 
     document.getElementById('result-time').innerHTML = timeDat/100
     document.getElementById('result-3bv').innerHTML = bv
-    document.getElementById('result-3bvs').innerHTML = ((timeDat/100)/bv).toFixed(4)
+    document.getElementById('result-3bvs').innerHTML = (bv/(timeDat/100)).toFixed(4)
     document.getElementById('result-click').innerHTML = clicks
+    document.getElementById('result-eff').textContent = clicks > 0 ? (bv / clicks * 100).toFixed(2) + "%" : "0.00%";
+
+    flags = 0
+    handleFlagCounter()
 }
 
 function checkWin() {
@@ -278,7 +282,7 @@ function revealEmptyCell(row, col) {
 
                 cell = document.querySelector(`[data-row="${neighRow}"][data-col="${neighCol}"]`)
 
-                if (rowOffset === 0 && colOffset === 0 || neighRow < 0 || neighRow >= rows || neighCol < 0 || neighCol >= cols || boardArray[neighRow][neighCol].revealed || boardArray[neighRow][neighCol].flagged) {
+                if (rowOffset === 0 && colOffset === 0 || neighRow < 0 || neighRow >= rows || neighCol < 0 || neighCol >= cols || boardArray[neighRow][neighCol].revealed || boardArray[neighRow][neighCol].flagged || boardArray[neighRow][neighCol].mine) {
                     continue
                 } else {
                     revealColor(cell)
@@ -406,58 +410,81 @@ function restartGame() {
 }
 
 function exploreZero(row, col) {
-    boardArray[row][col].visited = true
+    boardArray[row][col].visited = true;
 
     for (let rowOffset = -1; rowOffset <= 1; rowOffset++) {
-        for (let colOffset = -1; colOffset <= 1; colOffset++){
+        for (let colOffset = -1; colOffset <= 1; colOffset++) {
+            if (rowOffset === 0 && colOffset === 0) continue;
 
-            const neighRow = rowOffset + row
-            const neighCol = colOffset + col
+            const neighRow = row + rowOffset;
+            const neighCol = col + colOffset;
 
-            if (rowOffset === 0 && colOffset === 0 || neighRow < 0 || neighRow >= rows || neighCol < 0 || neighCol >= cols || boardArray[neighRow][neighCol].number != 0 || boardArray[neighRow][neighCol].mine || boardArray[neighRow][neighCol].visited) {
-                
-                continue
+            if (
+                neighRow < 0 || neighRow >= rows ||
+                neighCol < 0 || neighCol >= cols
+            ) {
+                continue;
+            }
 
-            } else {
-                
-                if (boardArray[neighRow][neighCol].number == 0) {
-                    exploreZero(neighRow, neighCol)
-                }
+            const neighbor = boardArray[neighRow][neighCol];
 
+            if (
+                neighbor.number === 0 &&
+                !neighbor.mine &&
+                !neighbor.visited
+            ) {
+                exploreZero(neighRow, neighCol);
             }
         }
-
     }
 }
 
 function tBV() {
+    bv = 0;
+
+    // Reset visited state before calculating 3BV.
     for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
-            
-            if (!boardArray[row][col].mine) {
-                if (boardArray[row][col].number == 0) {
-                    if (!boardArray[row][col].visited) {
-                        boardArray[row][col].visited = true
-                        bv += 1
-                        exploreZero(row, col)
-                    }
-                } else {
-                    let hasZero = false
+            boardArray[row][col].visited = false;
+        }
+    }
 
-                    for (let rowOffset = -1; rowOffset <= 1; rowOffset++) {
-                        for (let colOffset = -1; colOffset <= 1; colOffset++){
+    for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+            const cell = boardArray[row][col];
 
-                            const neighRow = rowOffset + row
-                            const neighCol = colOffset + col
+            if (cell.mine) continue;
 
-                            if (rowOffset === 0 && colOffset === 0 || neighRow < 0 || neighRow >= rows || neighCol < 0 || neighCol >= cols || boardArray[neighRow][neighCol].number == 0) {
-                                hasZero = true
-                            }
+            if (cell.number === 0) {
+                if (!cell.visited) {
+                    bv += 1;
+                    exploreZero(row, col);
+                }
+            } else {
+                let hasZero = false;
+
+                for (let rowOffset = -1; rowOffset <= 1; rowOffset++) {
+                    for (let colOffset = -1; colOffset <= 1; colOffset++) {
+                        if (rowOffset === 0 && colOffset === 0) continue;
+
+                        const neighRow = row + rowOffset;
+                        const neighCol = col + colOffset;
+
+                        if (
+                            neighRow < 0 || neighRow >= rows ||
+                            neighCol < 0 || neighCol >= cols
+                        ) {
+                            continue;
+                        }
+
+                        if (boardArray[neighRow][neighCol].number === 0) {
+                            hasZero = true;
                         }
                     }
-                    if (!hasZero) {
-                        bv += 1
-                    }
+                }
+
+                if (!hasZero) {
+                    bv += 1;
                 }
             }
         }
