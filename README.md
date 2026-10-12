@@ -20,5 +20,6 @@ Click on the tiles to uncover the board. Each number tells you how many 💩 are
 ## Credits
  - The library for the long press on mobile was taken from [here](https://www.cssscript.com/handle-long-press-tap-event-in-javascript-long-press-js/)
  - I used ChatGPT to explain how the logic works and how I should try to get to it (no spoon-feeding!)
+  > I also used AI to cut out the pictures of my dog so they would look more professional and could be used for the game 
  - Backgrounds from Google
  - The model is my dog Csoki❤️
